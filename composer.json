@@ -1,0 +1,33 @@
+{
+    "name": "llm-speak/ollama",
+    "description": "A Laravel package for integrating Local Ollama models into LLMSpeak",
+    "type": "library",
+    "version": "0.3.0",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Project Saturn Studios, LLC",
+            "email": "info@prejectsaturnstudios.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2"
+    },
+    "require-dev": {},
+    "autoload":{
+        "psr-4": {
+            "LLMSpeak\\Ollama\\": "src/"
+        }
+    },
+    "autoload-dev":{
+        "psr-4": {}
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LLMSpeak\\Ollama\\Providers\\OllamaLLMSpeakServiceProvider"
+            ]
+        }
+    }
+}
