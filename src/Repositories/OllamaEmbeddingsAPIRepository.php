@@ -2,13 +2,13 @@
 
 namespace LLMSpeak\Ollama\Repositories;
 
+use LLMSpeak\Ollama\Actions\OllamaAPI\Embeddings\GenerateEmbeddingsEndpoint;
+use LLMSpeak\Ollama\Support\Facades\Ollama;
+
 class OllamaEmbeddingsAPIRepository extends OllamaAPIRepository
 {
     protected ?string $model = null;
-    protected ?array $tools = null;
-    protected ?array $system_prompt = null;
-    protected ?float $temperature = null;
-    protected ?int $max_tokens = null;
+    protected string|array|null $input = null;
 
     public function withModel(string $model): static
     {
@@ -16,28 +16,13 @@ class OllamaEmbeddingsAPIRepository extends OllamaAPIRepository
         return $this;
     }
 
-    public function withMaxTokens(int $tokens): static
+    public function withInput(string|array $conversation): GenerateEmbeddingsEndpoint
     {
-        $this->max_tokens = $tokens;
-        return $this;
-    }
-
-
-    public function withSystemPrompt(array $prompt): static
-    {
-        $this->system_prompt = $prompt;
-        return $this;
-    }
-
-    public function withTools(array $tools): static
-    {
-        $this->tools = $tools;
-        return $this;
-    }
-
-    public function withTemperature(float $temperature): static
-    {
-        $this->temperature = $temperature;
-        return $this;
+        $this->input = $conversation;
+        return new GenerateEmbeddingsEndpoint(
+            url: Ollama::api_url(),
+            model: $this->model,
+            input: $this->input,
+        );
     }
 }
