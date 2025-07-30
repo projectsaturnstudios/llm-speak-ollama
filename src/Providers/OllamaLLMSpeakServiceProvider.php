@@ -3,12 +3,11 @@
 namespace LLMSpeak\Ollama\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use LLMSpeak\Ollama\OllamaLocal;
 
 class OllamaLLMSpeakServiceProvider extends ServiceProvider
 {
     protected array $config = [
-        'llms.services.ollama' => __DIR__ .'/../../config/llms/ollama.php',
+        'llms.providers.drivers.ollama' => __DIR__ .'/../../config/ollama.php',
     ];
 
     public function register(): void
@@ -19,13 +18,12 @@ class OllamaLLMSpeakServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->publishConfigs();
-        OllamaLocal::boot();
     }
 
     protected function publishConfigs() : void
     {
         $this->publishes([
-            $this->config['llms.services.ollama'] => config_path('llms/ollama.php'),
+            $this->config['llms.providers.drivers.ollama'] => config_path('llms/ollama.php'),
         ], ['llms', 'llms.ollama']);
     }
 
