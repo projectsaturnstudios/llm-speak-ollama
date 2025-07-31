@@ -221,6 +221,183 @@ $embeddings = $response->getEmbeddings();
 $tokenCount = $response->getPromptTokens();
 ```
 
+### Universal LLMSpeak Interface
+
+For **provider-agnostic embeddings** that work across Ollama, Gemini, Mistral, and other providers, use the universal LLMSpeak interface:
+
+```php
+use LLMSpeak\Core\Support\Facades\LLMSpeak;
+use LLMSpeak\Core\Support\Requests\LLMSpeakEmbeddingsRequest;
+
+// Universal request works with ANY provider
+$request = new LLMSpeakEmbeddingsRequest(
+    model: 'nomic-embed-text',
+    input: 'Generate embeddings for this text',
+    encoding_format: 'float',    // 'float' or 'base64'
+    dimensions: null,            // Use model default
+    task_type: null              // Not applicable for Ollama
+);
+
+// Execute with Ollama - same code works with other providers!
+$response = LLMSpeak::embeddingsFrom('ollama', $request);
+
+// Universal response methods
+$embeddings = $response->getAllEmbeddings();
+$firstVector = $response->getFirstEmbedding();
+$dimensions = $response->getDimensions();
+$tokenUsage = $response->getTotalTokens();
+$performanceData = $response->metadata; // Ollama-specific performance metrics
+```
+
+### Local Model Flexibility
+
+The universal interface works seamlessly with any local Ollama model:
+
+```php
+// Different embedding models with same interface
+$models = [
+    'nomic-embed-text',           // General-purpose embeddings
+    'mxbai-embed-large',          // Large model embeddings
+    'snowflake-arctic-embed',     // Specialized embeddings
+    'paraphrase-multilingual'     // Multilingual embeddings
+];
+
+foreach ($models as $model) {
+    $request = new LLMSpeakEmbeddingsRequest(
+        model: $model,
+        input: 'Test embedding generation',
+        encoding_format: 'float',
+        dimensions: null,
+        task_type: null
+    );
+    
+    try {
+        $response = LLMSpeak::embeddingsFrom('ollama', $request);
+        echo "Model {$model}: {$response->getDimensions()} dimensions\n";
+        
+        // Access Ollama-specific performance data
+        if (isset($response->metadata['total_duration_ms'])) {
+            echo "Generation time: {$response->metadata['total_duration_ms']}ms\n";
+        }
+    } catch (\Exception $e) {
+        echo "Model {$model} not available: {$e->getMessage()}\n";
+    }
+}
+```
+
+### Universal Batch Processing
+
+Process multiple texts efficiently with the universal interface:
+
+```php
+// Batch embedding generation
+$batchRequest = new LLMSpeakEmbeddingsRequest(
+    model: 'nomic-embed-text',
+    input: [
+        'Artificial intelligence is transforming industries',
+        'Machine learning enables automated decision making',
+        'Natural language processing understands human text',
+        'Computer vision interprets visual information',
+        'Deep learning uses neural networks for complex patterns'
+    ],
+    encoding_format: 'float',
+    dimensions: null,
+    task_type: null
+);
+
+$batchResponse = LLMSpeak::embeddingsFrom('ollama', $batchRequest);
+
+echo "Generated {$batchResponse->getEmbeddingCount()} embeddings";
+echo "Vector dimensions: {$batchResponse->getDimensions()}";
+
+// Access performance metrics for the entire batch
+if (isset($batchResponse->metadata['total_duration_ms'])) {
+    $totalTime = $batchResponse->metadata['total_duration_ms'];
+    $avgTimePerEmbedding = $totalTime / $batchResponse->getEmbeddingCount();
+    echo "Average time per embedding: {$avgTimePerEmbedding}ms";
+}
+```
+
+### Advanced Universal Features
+
+Leverage local processing benefits through the universal interface:
+
+```php
+// High-precision embeddings for similarity search
+$precisionRequest = new LLMSpeakEmbeddingsRequest(
+    model: 'nomic-embed-text',
+    input: 'Document for semantic similarity search',
+    encoding_format: 'float',    // High precision for accurate similarity
+    dimensions: null,
+    task_type: null
+);
+
+$precisionResponse = LLMSpeak::embeddingsFrom('ollama', $precisionRequest);
+
+// Compact embeddings for storage efficiency
+$compactRequest = new LLMSpeakEmbeddingsRequest(
+    model: 'nomic-embed-text',
+    input: 'Document for efficient storage',
+    encoding_format: 'base64',   // More compact format
+    dimensions: null,
+    task_type: null
+);
+
+$compactResponse = LLMSpeak::embeddingsFrom('ollama', $compactRequest);
+
+// Compare embedding formats
+echo "Float embeddings: " . count($precisionResponse->getFirstEmbedding()) . " dimensions\n";
+echo "Base64 embeddings: " . count($compactResponse->getFirstEmbedding()) . " dimensions\n";
+```
+
+### Privacy & Performance Benefits
+
+Ollama's local processing combined with universal interface provides unique advantages:
+
+```php
+// Process sensitive data locally with universal interface
+$sensitiveRequest = new LLMSpeakEmbeddingsRequest(
+    model: 'nomic-embed-text',
+    input: 'Confidential business document content',
+    encoding_format: 'float',
+    dimensions: null,
+    task_type: null
+);
+
+// Data never leaves your machine!
+$sensitiveResponse = LLMSpeak::embeddingsFrom('ollama', $sensitiveRequest);
+
+// Monitor local performance
+$perfData = $sensitiveResponse->metadata;
+echo "Local processing time: {$perfData['total_duration_ms']}ms\n";
+echo "Model load time: {$perfData['load_duration_ms']}ms\n";
+echo "Tokens processed: {$sensitiveResponse->getPromptTokens()}\n";
+```
+
+### Why Use Universal Interface?
+
+**✅ Provider Independence:** Switch between Ollama, Gemini, Mistral with zero code changes  
+**✅ Local Privacy:** Keep sensitive data on your hardware while using universal API  
+**✅ Future Proof:** New providers automatically supported  
+**✅ Consistent API:** Same methods across cloud and local providers  
+**✅ Performance Monitoring:** Access to Ollama's detailed performance metrics  
+**✅ Model Flexibility:** Use any local model with the same interface  
+
+```php
+// Same request works with local and cloud providers!
+$request = new LLMSpeakEmbeddingsRequest(
+    model: 'embedding-model',
+    input: 'Universal text input',
+    encoding_format: 'float',
+    dimensions: null,
+    task_type: null
+);
+
+$ollamaResponse = LLMSpeak::embeddingsFrom('ollama', $request);   // Local processing
+$geminiResponse = LLMSpeak::embeddingsFrom('gemini', $request);   // Google AI  
+$mistralResponse = LLMSpeak::embeddingsFrom('mistral', $request); // Mistral AI
+```
+
 ### Fluent Request Building
 
 Build complex requests using the fluent interface:

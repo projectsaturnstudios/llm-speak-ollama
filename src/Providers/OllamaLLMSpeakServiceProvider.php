@@ -7,7 +7,8 @@ use Illuminate\Support\ServiceProvider;
 class OllamaLLMSpeakServiceProvider extends ServiceProvider
 {
     protected array $config = [
-        'llms.providers.drivers.ollama' => __DIR__ .'/../../config/ollama.php',
+        'llms.chat-providers.drivers.ollama' => __DIR__ .'/../../config/ollama.php',
+        'llms.embeddings-providers.drivers.ollama' => __DIR__ .'/../../config/ollama-embeddings.php',
     ];
 
     public function register(): void
@@ -23,7 +24,8 @@ class OllamaLLMSpeakServiceProvider extends ServiceProvider
     protected function publishConfigs() : void
     {
         $this->publishes([
-            $this->config['llms.providers.drivers.ollama'] => config_path('llms/ollama.php'),
+            $this->config['llms.chat-providers.drivers.ollama'] => config_path('llms/chat-providers/drivers/ollama.php'),
+            $this->config['llms.embeddings-providers.drivers.ollama'] => config_path('llms/embeddings-providers/drivers/ollama.php'),
         ], ['llms', 'llms.ollama']);
     }
 

@@ -53,7 +53,7 @@ class OllamaEmbeddingsRequest extends Data
     )
     {
         $this->api_key = env('OLLAMA_API_KEY', null);
-        $this->url = rtrim(config('llms.providers.drivers.ollama.base_url'), '/') . '/embed';
+        $this->url = rtrim(config('llms.embeddings-providers.drivers.ollama.base_url'), '/') . '/embed';
     }
 
     /**

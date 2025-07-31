@@ -63,7 +63,7 @@ class OllamaChatRequest extends Data
     )
     {
         $this->api_key = env('OLLAMA_API_KEY', null);
-        $this->url = rtrim(config('llms.providers.drivers.ollama.base_url'), '/') . '/chat';
+        $this->url = rtrim(config('llms.chat-providers.drivers.ollama.base_url'), '/') . '/chat';
     }
 
     /**
