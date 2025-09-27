@@ -1,8 +1,8 @@
 {
     "name": "llm-speak/ollama",
-    "description": "A Laravel package for integrating Ollama into LLMSpeak",
+    "description": "A Laravel package for integrating Ollama's language models and services",
     "type": "library",
-    "version": "0.4.1",
+    "version": "0.8.0",
     "license": "MIT",
     "authors": [
         {
@@ -11,23 +11,47 @@
         }
     ],
     "require": {
-        "php": "^8.2"
+        "php": "^8.2",
+        "ext-json": "*",
+        "llm-speak/core": "^0.8.0",
+        "spatie/laravel-data": "^4.11",
+        "lorisleiva/laravel-actions": "^2.6",
+        "projectsaturnstudios/laravel-design-patterns": "^0.1.0"
     },
-    "require-dev": {},
+    "require-dev": {
+        "pestphp/pest": "^3.0",
+        "orchestra/testbench": "^10.0",
+        "mockery/mockery": "^1.6"
+    },
     "autoload":{
         "psr-4": {
             "LLMSpeak\\Ollama\\": "src/"
         }
     },
     "autoload-dev":{
-        "psr-4": {}
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
     },
     "minimum-stability": "stable",
     "extra": {
         "laravel": {
             "providers": [
-                "LLMSpeak\\Ollama\\Providers\\OllamaLLMSpeakServiceProvider"
+                "LLMSpeak\\Ollama\\Providers\\LLMSpeakOllamaServiceProvider"
             ]
+        }
+
+    },
+    "scripts": {
+        "test": "XDEBUG_MODE=coverage pest",
+        "test-coverage": "XDEBUG_MODE=coverage pest --coverage",
+        "test-coverage-html": "XDEBUG_MODE=coverage pest --coverage --coverage-html=tests/coverage",
+        "test-coverage-text": "XDEBUG_MODE=coverage pest --coverage --coverage-text",
+        "test-coverage-clover": "XDEBUG_MODE=coverage pest --coverage --coverage-clover=tests/coverage.xml"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
         }
     }
 }
