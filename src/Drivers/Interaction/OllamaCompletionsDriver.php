@@ -44,6 +44,7 @@ class OllamaCompletionsDriver extends ModelCompletionsDriver
 
                         if($all_strings)
                         {
+                            // if all messages are strings, this is a user message
                             $message = implode("\n", array_map(fn(TextOnlyContentMessage $msg) => $msg->content->toValue(), $message));
                             return  (new TextOnlyContentMessage(ConversationRole::USER, new TextObject($message)))->toArray();
                         }
@@ -51,7 +52,6 @@ class OllamaCompletionsDriver extends ModelCompletionsDriver
                         {
                             dd("Support multi modal messages!", $message);
                         }
-                        // if all messages are strings, this is a user message
 
                     }
                     else
@@ -69,7 +69,7 @@ class OllamaCompletionsDriver extends ModelCompletionsDriver
                                     'tool_calls' => array_map(fn(ToolCallObject $message) => [
                                         'function' => [
                                             'name' => $message->name,
-                                            'arguments' => $message->args
+                                            'arguments' => empty($message->args) ? new \stdClass() : $message->args
                                         ]
                                     ], $message->tool_calls)
                                 ];
@@ -109,7 +109,10 @@ class OllamaCompletionsDriver extends ModelCompletionsDriver
                     'function' => [
                         'name' => $tool_definition['name'],
                         'description' => $tool_definition['description'],
-                        'parameters' => $tool_definition['inputSchema'],
+                        'parameters' => array_map(function(array $schema) use($tool_definition) {
+                            if(empty($schema['properties'])) $schema['properties'] = new \stdClass();
+                            return $schema;
+                        }, [$tool_definition['inputSchema']])[0],
                     ]
                 ], $neural_model->getTools());
             }
