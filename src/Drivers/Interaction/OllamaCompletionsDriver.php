@@ -90,7 +90,7 @@ class OllamaCompletionsDriver extends ModelCompletionsDriver
                 'stream' => $neural_model->willStreamResponse(),
 
 
-                'keep_alive' => '30m'
+                'keep_alive' => -1
             ];
 
             if(!empty($neural_model->getSystemInstructions()))
@@ -116,8 +116,15 @@ class OllamaCompletionsDriver extends ModelCompletionsDriver
                     ]
                 ], $neural_model->getTools());
             }
+            if(!empty($neural_model->outputFormat()))
+            {
+                $results['format'] = $neural_model->outputFormat();
+            }
 
-            $options = [];
+            $options = [
+                'repeat_last_n' => -1,
+                'top_k' => 10,
+            ];
             if($neural_model->maxTokens()) $options['num_ctx'] = $neural_model->maxTokens();
             if($neural_model->temperature()) $options['temperature'] = $neural_model->temperature();
             if($neural_model->topP()) $options['top_p'] = $neural_model->topP();

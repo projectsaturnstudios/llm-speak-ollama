@@ -2,7 +2,7 @@
     "name": "llm-speak/ollama",
     "description": "A Laravel package for integrating Ollama's language models and services",
     "type": "library",
-    "version": "0.8.1",
+    "version": "0.8.2",
     "license": "MIT",
     "authors": [
         {
